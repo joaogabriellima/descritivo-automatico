@@ -26,4 +26,7 @@ export default {
     submit: {
         margin: '25px',
     },
+    listItem: {
+        margin: '20px'
+    }
 };

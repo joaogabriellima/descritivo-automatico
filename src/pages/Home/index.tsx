@@ -1,28 +1,44 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Typography, Container, Grid, FormControlLabel, Button, TextField, Checkbox } from '@material-ui/core';
+import moment from 'moment';
 
 // Styles
 import styles from './styles';
 
+function DescriptiveList() {
+
+}
+
 export default function HomePage() {
     const [names, setNames] = useState('');
     const [isDefault, setIsDefault] = useState(true);
-    const [startDate, setStartDate] = useState();
-    const [endDate, setEndDate] = useState();
+    const [startDate, setStartDate] = useState('2021-03-01');
+    const [endDate, setEndDate] = useState('2021-03-31');
+    const [allDescriptives, setAllDescriptives] = useState<string[]>([]);
 
     function OnSubmit() {
-        console.log(startDate);
-        console.log(endDate);
-        console.log(names);
+        const startDateFormatted = moment(startDate, 'YYYY-MM-DD').format('DD/MM/YYYY');
+        const endDateFormatted = moment(endDate, 'YYYY-MM-DD').format('DD/MM/YYYY');
 
         if (isDefault) {
-            const allNames = names.split(';');
+            let allNames = names.split(';');
+            let pushToDescriptives: string[] = [];
             allNames.forEach((e) => {
-
+                const descriptiveDefaultText = `Boa tarde, ${e}! Segue anexo o descritivo referente ao período de ${startDateFormatted} a ${endDateFormatted}. Estando de acordo, por gentileza, enviar a nota fiscal para pagamento no e-mail: financeiro@kuadro.com.br. Atte., Marina Ribeiro`;
+                pushToDescriptives.push(descriptiveDefaultText);
             });
-            const descriptiveDefaultText = 'Boa tarde, Vitor! Segue anexo o descritivo referente ao período de 01/02/2021 a 28/02/2021. Estando de acordo, por gentileza, enviar a nota fiscal para pagamento no e-mail: financeiro@kuadro.com.br. Atte., Marina Ribeiro';
+
+            setAllDescriptives(pushToDescriptives);
             return;
         }
+    }
+
+    function isFormValid() {
+        if (names === '' || startDate === '' || endDate === '') {
+            return false;
+        }
+
+        return true;
     }
 
     const handleChangeYes = () => {
@@ -78,7 +94,7 @@ export default function HomePage() {
                             id="startDate"
                             label="Início"
                             type="date"
-                            defaultValue="2021-03-01"
+                            defaultValue={startDate}
                             style={styles.dateInput}
                             onChange={handleChangeStartDate}
                             InputLabelProps={{
@@ -89,7 +105,7 @@ export default function HomePage() {
                             id="endDate"
                             label="Fim"
                             type="date"
-                            defaultValue="2021-03-01"
+                            defaultValue={endDate}
                             style={styles.dateInput}
                             onChange={handleChangeEndDate}
                             InputLabelProps={{
@@ -127,16 +143,28 @@ export default function HomePage() {
                             />
                         </Grid>
                     ) : null}
+
+                    <Button
+                        fullWidth
+                        variant="contained"
+                        color="primary"
+                        onClick={OnSubmit}
+                        style={styles.submit}
+                        disabled={!isFormValid()}
+                    >
+                        Gerar Descritivos
+                    </Button>
+
+                    {allDescriptives.map((item, index) => {
+                        return (
+                            <Grid item xs={12}>
+                                <Typography component="h5" variant="h5" style={styles.listItem}>
+                                    {item}
+                                </Typography>
+                            </Grid>)
+                    })}
+
                 </Grid>
-                <Button
-                    fullWidth
-                    variant="contained"
-                    color="primary"
-                    onClick={OnSubmit}
-                    style={styles.submit}
-                >
-                    Gerar Descritivos
-              </Button>
             </div>
         </Container>
     );
