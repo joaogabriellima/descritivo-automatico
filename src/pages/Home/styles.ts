@@ -26,6 +26,9 @@ export default {
     submit: {
         margin: '25px',
     },
+    customTitleInput: {
+        marginBottom: '20px'
+    },
     listItem: {
         margin: '20px'
     }

@@ -1,43 +1,88 @@
 import React, { useState } from 'react';
-import { Typography, Container, Grid, FormControlLabel, Button, TextField, Checkbox } from '@material-ui/core';
+import { Typography, Container, Grid, FormControlLabel, Button, TextField, Checkbox, Divider } from '@material-ui/core';
 import moment from 'moment';
 
 // Styles
 import styles from './styles';
+import GenerateDescriptives from './types';
 
 export default function HomePage() {
     const [names, setNames] = useState('');
     const [isDefault, setIsDefault] = useState(true);
+    const [value, setValue] = useState(0);
     const [startDate, setStartDate] = useState('2021-03-01');
     const [endDate, setEndDate] = useState('2021-03-31');
     const [allDescriptives, setAllDescriptives] = useState([{
         title: '',
         message: ''
     }]);
+    const [customTitle, setCustomTitle] = useState('');
+    const [customText, setCustomText] = useState('');
 
-    function OnSubmit() {
+    function onSubmit() {
         const startDateFormatted = moment(startDate, 'YYYY-MM-DD').format('DD/MM/YYYY');
         const endDateFormatted = moment(endDate, 'YYYY-MM-DD').format('DD/MM/YYYY');
+        const allNames = names.split(';');
+
+        const params: GenerateDescriptives = {
+            startDateFormatted: startDateFormatted,
+            endDateFormatted: endDateFormatted,
+            allNamesArray: allNames,
+            value: value
+        }
 
         if (isDefault) {
-            let allNames = names.split(';');
-            let pushToDescriptives = [{ title: '', message: '' }];
-            allNames.forEach((e) => {
-                const title = `Descritivo ${e} - Ref. ao período de ${startDateFormatted} a ${endDateFormatted}`;
-                const message = `Boa tarde, ${e}!
-                 Segue anexo o descritivo referente ao período de ${startDateFormatted} a ${endDateFormatted}. 
+            defaultDescriptiveGeneration(params);
+            return;
+        }
+
+        customDescriptiveGeneration(params);
+    }
+
+    function defaultDescriptiveGeneration(params: GenerateDescriptives) {
+        const { allNamesArray, startDateFormatted, endDateFormatted, value } = params;
+        let pushToDescriptives = [{ title: '', message: '' }];
+        allNamesArray.forEach((e) => {
+            const title = `Descritivo ${e} - Ref. ao período de ${startDateFormatted} a ${endDateFormatted}`;
+            const message = `Boa tarde, ${e}!
+                 Segue em anexo o descritivo referente ao período de ${startDateFormatted} a ${endDateFormatted}. 
+                 Valor: R$ ${value}
                  
                  Estando de acordo, por gentileza, enviar a nota fiscal para pagamento no e-mail: financeiro@kuadro.com.br. 
                  
                  Att., 
                  
                  Marina Ribeiro`;
-                pushToDescriptives.push({ title, message });
-            });
+            pushToDescriptives.push({ title, message });
+        });
 
-            setAllDescriptives(pushToDescriptives);
-            return;
-        }
+        setAllDescriptives(pushToDescriptives);
+    }
+
+    function customDescriptiveGeneration(params: GenerateDescriptives) {
+        const { allNamesArray, startDateFormatted, endDateFormatted, value } = params;
+        let title = customTitle;
+        let message = customText;
+        let pushToDescriptives = [{ title: '', message: '' }];
+
+        allNamesArray.forEach((nome) => {
+            let title = customTitle;
+            let message = customText;
+
+            title = title.replace('${nome}', ` ${nome} `);
+            title = title.replace('${dataInicial}', ` ${startDateFormatted} `);
+            title = title.replace('${dataFinal}', ` ${endDateFormatted} `);
+            title = title.replace('${valor}', ` ${value} `);
+
+            message = message.replace('${nome}', ` ${nome} `);
+            message = message.replace('${dataInicial}', ` ${startDateFormatted} `);
+            message = message.replace('${dataFinal}', ` ${endDateFormatted} `);
+            message = message.replace('${valor}', ` ${value} `);
+
+            pushToDescriptives.push({ title, message });
+        });
+
+        setAllDescriptives(pushToDescriptives);
     }
 
     function isFormValid() {
@@ -60,12 +105,24 @@ export default function HomePage() {
         setNames(event.target.value);
     }
 
+    const handleChangeValue = (event) => {
+        setValue(event.target.value);
+    }
+
     const handleChangeStartDate = (event) => {
         setStartDate(event.target.value);
     }
 
     const handleChangeEndDate = (event) => {
         setEndDate(event.target.value);
+    }
+
+    const handleChangeCustomTitle = (event) => {
+        setCustomTitle(event.target.value);
+    }
+
+    const handleChangeCustomText = (event) => {
+        setCustomText(event.target.value);
     }
 
     return (
@@ -91,6 +148,21 @@ export default function HomePage() {
                             placeholder="exemplo; exemplo2; exemplo3"
                             style={styles.namesInput}
                             onChange={handleChangeNames}
+                        />
+                    </Grid>
+                    <Grid item xs={12}>
+                        <TextField
+                            autoComplete="valor"
+                            type="number"
+                            name="valor"
+                            variant="outlined"
+                            required
+                            fullWidth
+                            id="Valor"
+                            label="Valor"
+                            placeholder="R$ 99,90"
+                            style={styles.namesInput}
+                            onChange={handleChangeValue}
                         />
                     </Grid>
                     <Grid item xs={12}>
@@ -142,11 +214,26 @@ export default function HomePage() {
                                 variant="outlined"
                                 required
                                 fullWidth
+                                id="firstName"
+                                label="Título"
+                                autoFocus
+                                placeholder="Use ${nome} para posicionar o nome, ${valor} para o valor, ${dataInicial} e ${dataFinal} para posicionar as datas"
+                                style={styles.customTitleInput}
+                                onChange={handleChangeCustomTitle}
+                            />
+                            <TextField
+                                autoComplete="fname"
+                                name="firstName"
+                                variant="outlined"
+                                required
+                                fullWidth
                                 multiline
                                 rows={8}
                                 id="firstName"
                                 label="Texto do descritivo"
+                                placeholder={'Use ${nome} para posicionar os nomes, ${valor} para o valor, ${dataInicial} e ${dataFinal} para posicionar as datas.'}
                                 autoFocus
+                                onChange={handleChangeCustomText}
                             />
                         </Grid>
                     ) : null}
@@ -155,7 +242,7 @@ export default function HomePage() {
                         fullWidth
                         variant="contained"
                         color="primary"
-                        onClick={OnSubmit}
+                        onClick={onSubmit}
                         style={styles.submit}
                         disabled={!isFormValid()}
                     >
@@ -172,6 +259,7 @@ export default function HomePage() {
                                     <Typography style={styles.listItem}>
                                         {item.message}
                                     </Typography>
+                                    <Divider />
                                 </Grid>)
                         }
 
