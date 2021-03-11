@@ -4,13 +4,20 @@
   "private": true,
   "homepage": "https://joaogabriellima.github.io/descritivo-automatico/",
   "dependencies": {
+    "@material-ui/core": "^4.11.3",
+    "@material-ui/icons": "^4.11.2",
+    "@material-ui/lab": "^4.0.0-alpha.57",
+    "@material-ui/pickers": "^3.2.10",
     "@testing-library/jest-dom": "^5.11.4",
     "@testing-library/react": "^11.1.0",
     "@testing-library/user-event": "^12.1.10",
     "gh-pages": "^3.1.0",
+    "materialui-daterange-picker": "^1.1.92",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
     "react-scripts": "4.0.3",
+    "sweetalert2": "^10.15.5",
+    "typescript": "^4.2.3",
     "web-vitals": "^1.0.1"
   },
   "scripts": {
@@ -18,7 +25,7 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "deploy":"npm run build && cd node_modules && cd .bin && gh-pages -d ../../build"
+    "deploy": "npm run build && cd node_modules && cd .bin && gh-pages -d ../../build"
   },
   "eslintConfig": {
     "extends": [
