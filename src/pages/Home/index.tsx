@@ -5,16 +5,15 @@ import moment from 'moment';
 // Styles
 import styles from './styles';
 
-function DescriptiveList() {
-
-}
-
 export default function HomePage() {
     const [names, setNames] = useState('');
     const [isDefault, setIsDefault] = useState(true);
     const [startDate, setStartDate] = useState('2021-03-01');
     const [endDate, setEndDate] = useState('2021-03-31');
-    const [allDescriptives, setAllDescriptives] = useState<string[]>([]);
+    const [allDescriptives, setAllDescriptives] = useState([{
+        title: '',
+        message: ''
+    }]);
 
     function OnSubmit() {
         const startDateFormatted = moment(startDate, 'YYYY-MM-DD').format('DD/MM/YYYY');
@@ -22,10 +21,18 @@ export default function HomePage() {
 
         if (isDefault) {
             let allNames = names.split(';');
-            let pushToDescriptives: string[] = [];
+            let pushToDescriptives = [{ title: '', message: '' }];
             allNames.forEach((e) => {
-                const descriptiveDefaultText = `Boa tarde, ${e}! Segue anexo o descritivo referente ao período de ${startDateFormatted} a ${endDateFormatted}. Estando de acordo, por gentileza, enviar a nota fiscal para pagamento no e-mail: financeiro@kuadro.com.br. Atte., Marina Ribeiro`;
-                pushToDescriptives.push(descriptiveDefaultText);
+                const title = `Descritivo ${e} - Ref. ao período de ${startDateFormatted} a ${endDateFormatted}`;
+                const message = `Boa tarde, ${e}!
+                 Segue anexo o descritivo referente ao período de ${startDateFormatted} a ${endDateFormatted}. 
+                 
+                 Estando de acordo, por gentileza, enviar a nota fiscal para pagamento no e-mail: financeiro@kuadro.com.br. 
+                 
+                 Att., 
+                 
+                 Marina Ribeiro`;
+                pushToDescriptives.push({ title, message });
             });
 
             setAllDescriptives(pushToDescriptives);
@@ -156,12 +163,19 @@ export default function HomePage() {
                     </Button>
 
                     {allDescriptives.map((item, index) => {
-                        return (
-                            <Grid item xs={12}>
-                                <Typography component="h5" variant="h5" style={styles.listItem}>
-                                    {item}
-                                </Typography>
-                            </Grid>)
+                        if (item.title !== '') {
+                            return (
+                                <Grid item xs={12}>
+                                    <Typography style={styles.listItem}>
+                                        {item.title}
+                                    </Typography>
+                                    <Typography style={styles.listItem}>
+                                        {item.message}
+                                    </Typography>
+                                </Grid>)
+                        }
+
+                        return null;
                     })}
 
                 </Grid>
