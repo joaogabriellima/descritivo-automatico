@@ -1,13 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Typography, Container, Grid, FormControlLabel, Button, TextField, Checkbox } from '@material-ui/core';
-import { DateRangePicker, DateRange } from "materialui-daterange-picker";
-
-import Box from '@material-ui/core/Box';
 
 // Styles
 import styles from './styles';
-
-const defaultDescriptiveText = '';
 
 export default function HomePage() {
     const [names, setNames] = useState('');
@@ -19,6 +14,15 @@ export default function HomePage() {
         console.log(startDate);
         console.log(endDate);
         console.log(names);
+
+        if (isDefault) {
+            const allNames = names.split(';');
+            allNames.forEach((e) => {
+
+            });
+            const descriptiveDefaultText = 'Boa tarde, Vitor! Segue anexo o descritivo referente ao período de 01/02/2021 a 28/02/2021. Estando de acordo, por gentileza, enviar a nota fiscal para pagamento no e-mail: financeiro@kuadro.com.br. Atte., Marina Ribeiro';
+            return;
+        }
     }
 
     const handleChangeYes = () => {
