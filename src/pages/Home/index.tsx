@@ -28,7 +28,7 @@ export default function HomePage() {
             startDateFormatted: startDateFormatted,
             endDateFormatted: endDateFormatted,
             allNamesArray: allNames,
-            value: value
+            value: value ?? 0
         }
 
         if (isDefault) {
@@ -50,9 +50,7 @@ export default function HomePage() {
                  
                  Estando de acordo, por gentileza, enviar a nota fiscal para pagamento no e-mail: financeiro@kuadro.com.br. 
                  
-                 Att., 
-                 
-                 Marina Ribeiro`;
+                 Att,`;
             pushToDescriptives.push({ title, message });
         });
 
@@ -87,6 +85,10 @@ export default function HomePage() {
 
     function isFormValid() {
         if (names === '' || startDate === '' || endDate === '') {
+            return false;
+        }
+
+        if (!isDefault && (customTitle === '' || customText === '')) {
             return false;
         }
 
